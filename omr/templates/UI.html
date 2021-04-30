@@ -1,0 +1,80 @@
+<head>
+    <style>
+    #uploadform{
+        max-width: 414px;
+        margin-left:auto;
+        margin-right:auto;
+        padding: 20px;
+        background: #eee8d5;
+        border: 1px solid #e0e0e0;
+        border-radius: 7px
+    }
+</style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    </head>
+<form id="uploadform" name="calcform" autocomplete="off">
+    <div class="form-group">
+        <h1>OMR VALIDATOR</h1>
+    </div>
+    {{msg}}
+    <div class="form-group">
+    <label for="x1">Enter the Answer Key</label>
+    <br>
+    <div class="input-group">
+    <input type="file" id="x1" name="x1" step="any" class="form-control" required="">
+    
+    </div>
+    </div>
+    <br><br><br>
+    <div class="form-group">
+    <label for="x1">Enter the Answer Sheets</label>
+    <br>
+    <div class="input-group">
+    <input type="file" id="x2" name="x2" multiple="multiple" step="any" class="form-control" required="">
+    
+    </div>
+    </div>
+    <br><br><br>
+    <div class="form-group">
+        <button type="button" title="Calculate" class="btn btn-secondary" onclick="convert()"><img src="/lib/icons/glyphicons_all/glyphicons_halflings/glyphicons_halflings_018_cog.png" alt="">Validate</button>
+      
+    </div>
+    
+    <div class="form-group">
+        
+    </div>
+    </form>
+    
+
+
+    <script>
+    
+function convert(){
+    var form_data = new FormData();
+    var key =  document.getElementById('x1');
+    form_data.append('key',key);
+    var fileInput = document.getElementById('x2');
+    form_data.append('omr', fileInput.files);
+    $.ajax({
+        type: 'POST',
+        url:  'http://127.0.0.1:5000/omrvalidate/',
+        cors : true,
+        headers: {
+            'Access-Control-Allow-Origin': '*',
+        },
+        data: new FormData(document.getElementById("uploadform")),
+        contentType: false,
+        cache: false,
+        processData: false,
+        success: function(data) {
+            console.log(data);
+            var blob=new Blob([data]);
+            var link=document.createElement('a');
+            link.href=window.URL.createObjectURL(blob);
+            link.download="score.csv";
+            link.click();
+        },
+    });
+}
+    </script>
